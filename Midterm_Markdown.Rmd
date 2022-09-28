@@ -1,6 +1,6 @@
 ---
-title: "MUSA 508, Lab 4 - Spatial Machine Learning Pt. 1"
-author: "Harris, Fichman, and Steif - 2022/23"
+title: "MUSA 508, Midterm"
+author: "Brooke Acosta, Kate Tanabe"
 output: html_document
 ---
 
@@ -28,10 +28,12 @@ library(ggstance) # to support jtools plots
 library(ggpubr)    # plotting R^2 value on ggplot point scatter
 library(broom.mixed) # needed for effects plots
 
-# functions and data directory
-root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+# functions and data directory"
 
-source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+source("https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson")
+
+palette5 <- c("#25CB10", "#5AB60C", "#8FA108",   "#C48C04", "#FA7800")
 
 palette5 <- c("#25CB10", "#5AB60C", "#8FA108",   "#C48C04", "#FA7800")
 ```
