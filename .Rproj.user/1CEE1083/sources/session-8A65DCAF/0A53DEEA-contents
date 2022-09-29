@@ -39,23 +39,14 @@ palette5 <- c("#25CB10", "#5AB60C", "#8FA108",   "#C48C04", "#FA7800")
 
 # MUSA 508, Lab 4 - Spatial Machine Learning Pt. 1
 
-The learning objectives of this lab are:
-
-*   Review Topics: loading data, {dplyr}, mapping and plotting with {ggplot2}
-*   New: Understanding how we created spatial indicators with K-Nearest Neighbor and the `nn_function()` function
-*   Simple correlation and the Pearson's r - Correlation Coefficient
-*   Linear Regression model goodness-of-fit and R2 - Coefficient of Determination
-
-The in-class exercise at the end encourages students to modify the existing code to create a different regression and interpret it. Finally, there is a prompt to create a new feature and add it to the regression.
-
 ## Data Wrangling
 
 See if you can change the chunk options to get rid of the text outputs
 
 ```{r read_data}
 
-nhoods <- 
-  st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/3525b0ee6e6b427f9aab5d0a1d0a1a28_0.geojson") %>%
+prox_transit <- 
+  st_read(".geojson") %>%
   st_transform('ESRI:102286')
 
 boston <- 
