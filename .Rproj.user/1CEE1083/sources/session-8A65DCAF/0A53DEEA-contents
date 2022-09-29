@@ -46,7 +46,7 @@ See if you can change the chunk options to get rid of the text outputs
 ```{r read_data}
 
 prox_transit <- 
-  st_read(".geojson") %>%
+  st_read("Proximity.to.Public.Transportation") %>%
   st_transform('ESRI:102286')
 
 boston <- 
