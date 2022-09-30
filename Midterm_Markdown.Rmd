@@ -45,20 +45,13 @@ See if you can change the chunk options to get rid of the text outputs
 
 ```{r read_data}
 
-prox_transit <- 
-  st_read(".geojson") %>%
-  st_transform('ESRI:102286')
-
-boston <- 
-  read.csv(file.path(root.dir,"/Chapter3_4/bostonHousePriceData_clean.csv"))
-
-boston.sf <- 
-  boston %>% 
+NC_Data.sf <- 
+  NC_Data %>% 
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, agr = "constant") %>%
   st_transform('ESRI:102286')
 
 
-bostonCrimes <- read.csv(file.path(root.dir,"/Chapter3_4/bostonCrimes.csv"))
+## NC_Crimes <- read.csv(file.path(root.dir,"/Chapter3_4/bostonCrimes.csv"))
 
 ```
 
@@ -67,10 +60,12 @@ bostonCrimes <- read.csv(file.path(root.dir,"/Chapter3_4/bostonCrimes.csv"))
 ```{r EDA}
 
 # finding counts by group
-bostonCrimes %>% 
-group_by(OFFENSE_CODE_GROUP) %>%
+NC_Data %>% 
+group_by(bldggrade) %>%
+  st_drop_geometry() %>%
   summarize(count = n()) %>%
-  arrange(-count) %>% top_n(10) %>%
+  arrange(-count) %>% 
+  head(10) %>%
   kable() %>%
   kable_styling()
 ```
@@ -84,13 +79,13 @@ See if you can alter the size of the image output. Search for adjusting figure h
 
 # Mapping data
 ggplot() +
-  geom_sf(data = nhoods, fill = "grey40") +
-  geom_sf(data = boston.sf, aes(colour = q5(PricePerSq)), 
+  geom_sf(data = NC_Data, fill = "grey40") +
+  geom_sf(data = NC_Data.sf, aes(colour = q5(price)), 
           show.legend = "point", size = .75) +
   scale_colour_manual(values = palette5,
-                   labels=qBr(boston,"PricePerSq"),
+                   labels= qBr(NC_Data, "price"),
                    name="Quintile\nBreaks") +
-  labs(title="Price Per Square Foot, Boston") +
+  labs(title="Price Per Square Foot, North Carolina") +
   mapTheme()
 ```
 
@@ -98,8 +93,8 @@ ggplot() +
 Why are we using a filter for `Lat > -1`?
 
 ```{r clean_crime}
-bostonCrimes.sf <-
-  bostonCrimes %>%
+NC_Data.sf <-
+  NC_Data %>%
     filter(OFFENSE_CODE_GROUP == "Aggravated Assault",
            Lat > -1) %>%
     dplyr::select(Lat, Long) %>%
