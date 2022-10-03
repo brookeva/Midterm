@@ -210,7 +210,7 @@ Can we resize this somehow to make it look better?
 
 ```{r crime_corr}
 ## Crime cor
-boston.sf %>%
+NCData.sf %>%
   st_drop_geometry() %>%
   mutate(Age = 2015 - YR_BUILT) %>%
   dplyr::select(SalePrice, starts_with("crime_")) %>%
@@ -381,21 +381,21 @@ What is the Coefficient of LivingArea when Average Distance to 2-nearest crimes 
 #new code: setting up tests
 ```{r}
 inTrain <- createDataPartition(
-              y = paste(boston.sf$Name, boston.sf$NUM_FLOORS.cat, 
-                        boston.sf$Style, boston.sf$R_AC), 
+              y = paste(NCData.sf$Name, NCData.sf$NUM_FLOORS.cat, 
+                        NCData.sf$Style, NCData.sf$R_AC), 
               p = .60, list = FALSE)
-boston.training <- boston.sf[inTrain,] 
-boston.test <- boston.sf[-inTrain,]  
+NCData.training <- NCData.sf[inTrain,] 
+NCData.test <- NCData.sf[-inTrain,]  
  
 reg.training <- 
-  lm(SalePrice ~ ., data = as.data.frame(boston.training) %>% 
+  lm(SalePrice ~ ., data = as.data.frame(NCData.training) %>% 
                              dplyr::select(SalePrice, LivingArea, Style, 
                                            GROSS_AREA, NUM_FLOORS.cat,
                                            R_BDRMS, R_FULL_BTH, R_HALF_BTH, 
                                            R_KITCH, R_AC, R_FPLACE, crimes.Buffer))
 
-boston.test <-
-  boston.test %>%
+NCData.test <-
+  NCData.test %>%
   mutate(Regression = "Baseline Regression",
          SalePrice.Predict = predict(reg.training, boston.test),
          SalePrice.Error = SalePrice.Predict - SalePrice,
@@ -410,31 +410,31 @@ boston.test <-
 #To do so, the code block below introduces new feature engineering that calculates for each home sale, the average sale price of its k nearest neighbors. In spatial analysis parlance, this is the ‘spatial lag’, and it is measured using a series of functions from the spdep package.
 
 ```{r}
-coords <- st_coordinates(boston.sf) 
+coords <- st_coordinates(NCData.sf) 
 
 neighborList <- knn2nb(knearneigh(coords, 5))
 
 spatialWeights <- nb2listw(neighborList, style="W")
 
-boston.sf$lagPrice <- lag.listw(spatialWeights, boston.sf$SalePrice)
+NCData.sf$lagPrice <- lag.listw(spatialWeights, NCData.sf$SalePrice)
 ```
 
 #How about for model errors? The code block below replicates the spatial lag procedure for SalePrice.Error, calculating the lag directly in the mutate of ggplot.
 ```{r}
-Hidecoords.test <-  st_coordinates(boston.test) 
+Hidecoords.test <-  st_coordinates(NCData.test) 
 
 neighborList.test <- knn2nb(knearneigh(coords.test, 5))
 
 spatialWeights.test <- nb2listw(neighborList.test, style="W")
  
-boston.test %>% 
+NCData.test %>% 
   mutate(lagPriceError = lag.listw(spatialWeights.test, SalePrice.Error)) %>%
   ggplot(aes(lagPriceError, SalePrice.Error))
 ```
 
 #Do spatial errors cluster? Moran's I
 ```{r}
-moranTest <- moran.mc(boston.test$SalePrice.Error, 
+moranTest <- moran.mc(NCData.test$SalePrice.Error, 
                       spatialWeights.test, nsim = 999)
 
 ggplot(as.data.frame(moranTest$res[c(1:999)]), aes(moranTest$res[c(1:999)])) +
@@ -452,12 +452,12 @@ ggplot(as.data.frame(moranTest$res[c(1:999)]), aes(moranTest$res[c(1:999)])) +
 #For some intuition, the code block below regresses SalePrice as a function of neighborhood fixed effects, Name. A table is created showing that for each neighborhood, the mean SalePrice and the meanPrediction are identical. Thus, accounting for neighborhood effects accounts for the neighborhood mean of prices, and hopefully, some of the spatial process that was otherwise omitted from the model. Try to understand how left_join helps create the below table.
 ```{r}
 left_join(
-  st_drop_geometry(boston.test) %>%
+  st_drop_geometry(NCData.test) %>%
     group_by(Name) %>%
     summarize(meanPrice = mean(SalePrice, na.rm = T)),
-  mutate(boston.test, predict.fe = 
-                        predict(lm(SalePrice ~ Name, data = boston.test), 
-                        boston.test)) %>%
+  mutate(NCData.test, predict.fe = 
+                        predict(lm(SalePrice ~ Name, data = NCData.test), 
+                        NCData.test)) %>%
     st_drop_geometry %>%
     group_by(Name) %>%
       summarize(meanPrediction = mean(predict.fe))) %>%
@@ -466,16 +466,16 @@ left_join(
 
 #The code block below estimates reg.nhood and creates a data frame, boston.test.nhood, with all goodness of fit metrics.
 ```{r}
-reg.nhood <- lm(SalePrice ~ ., data = as.data.frame(boston.training) %>% 
+reg.nhood <- lm(SalePrice ~ ., data = as.data.frame(NCData.training) %>% 
                                  dplyr::select(Name, SalePrice, LivingArea, 
                                                Style, GROSS_AREA, NUM_FLOORS.cat,
                                                R_BDRMS, R_FULL_BTH, R_HALF_BTH, 
                                                R_KITCH, R_AC, R_FPLACE,crimes.Buffer))
 
-boston.test.nhood <-
-  boston.test %>%
+NCData.test.nhood <-
+  NCData.test %>%
   mutate(Regression = "Neighborhood Effects",
-         SalePrice.Predict = predict(reg.nhood, boston.test),
+         SalePrice.Predict = predict(reg.nhood, NCData.test),
          SalePrice.Error = SalePrice.Predict- SalePrice,
          SalePrice.AbsError = abs(SalePrice.Predict- SalePrice),
          SalePrice.APE = (abs(SalePrice.Predict- SalePrice)) / SalePrice)%>%
@@ -487,9 +487,9 @@ boston.test.nhood <-
 ```{r}
 bothRegressions <- 
   rbind(
-    dplyr::select(boston.test, starts_with("SalePrice"), Regression, Name) %>%
+    dplyr::select(NCData.test, starts_with("SalePrice"), Regression, Name) %>%
       mutate(lagPriceError = lag.listw(spatialWeights.test, SalePrice.Error)),
-    dplyr::select(boston.test.nhood, starts_with("SalePrice"), Regression, Name) %>%
+    dplyr::select(NCData.test.nhood, starts_with("SalePrice"), Regression, Name) %>%
       mutate(lagPriceError = lag.listw(spatialWeights.test, SalePrice.Error)))  
 ```
 

@@ -1,0 +1,23 @@
+"0","## Crime cor
+NCData.sf %>%
+  st_drop_geometry() %>%
+  mutate(Age = 2015 - YR_BUILT) %>%
+  dplyr::select(SalePrice, starts_with(""crime_"")) %>%
+  filter(SalePrice <= 1000000) %>%
+  gather(Variable, Value, -SalePrice) %>% 
+   ggplot(aes(Value, SalePrice)) +
+     geom_point(size = .5) + geom_smooth(method = ""lm"", se=F, colour = ""#FA7800"") +
+     facet_wrap(~Variable, nrow = 1, scales = ""free"") +
+     labs(title = ""Price as a function of continuous variables"") +
+     plotTheme()
+"
+"1","[1m[33mError[39m in [38;5;232m`mutate()`[39m:[22m
+[38;5;232m[33m![38;5;232m Problem while computing `Age = 2015 - YR_BUILT`.[39m
+[1mCaused by error in [38;5;232m`mask$eval_all_mutate()`[39m:[22m
+[33m![39m object 'YR_BUILT' not found
+Backtrace:
+[90m  1. [39m... %>% ggplot(aes(Value, SalePrice))
+[90m  7. [39m[38;5;232m[1m[94mdplyr:::mutate.data.frame([38;5;232m[22m[39m., Age = 2015 - YR_BUILT[38;5;232m[1m[94m)[38;5;232m[22m[39m
+[90m  8. [39mdplyr:::mutate_cols(.data, dplyr_quosures(...), caller_env = caller_env())
+[90m 10. [39mmask$eval_all_mutate(quo)
+"

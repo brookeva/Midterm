@@ -1,0 +1,7 @@
+"0","inTrain <- createDataPartition("
+"0","              y = paste(NCData.sf$Name, NCData.sf$NUM_FLOORS.cat, "
+"0","                        NCData.sf$Style, NCData.sf$R_AC), "
+"0","              p = .60, list = FALSE)"
+"2","Error in createDataPartition(y = paste(NCData.sf$Name, NCData.sf$NUM_FLOORS.cat,  : 
+  y must have at least 2 data points
+"
