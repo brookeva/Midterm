@@ -1,0 +1,4 @@
+"0","NCData.test <- NCData.sf[-inTrain,]  
+"
+"2","Error in `[.sf`(NCData.sf, -inTrain, ) : object 'inTrain' not found
+"

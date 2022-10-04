@@ -1,0 +1,16 @@
+"0","NC_Data %>% 
+group_by(bldggrade)
+"
+"1","Simple feature collection with 46183 features and 71 fields"
+"1","
+"
+"1","Geometry type: POINT
+"
+"1","Dimension:     XY
+"
+"1","Bounding box:  "
+"1","xmin: -81.05626 ymin: 35.01345 xmax: -80.55941 ymax: 35.51012"
+"1","
+"
+"1","Geodetic CRS:  WGS 84
+"

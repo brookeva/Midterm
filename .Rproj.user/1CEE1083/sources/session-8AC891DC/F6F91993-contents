@@ -1,0 +1,15 @@
+---
+title: "Midterm"
+output: html_document
+date: "2022-09-28"
+---
+
+```{r setup, include=FALSE}
+install.packages("geojsonR")
+
+NC_Data = st_read("https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson")
+head(NC_Data)
+
+```
+
+

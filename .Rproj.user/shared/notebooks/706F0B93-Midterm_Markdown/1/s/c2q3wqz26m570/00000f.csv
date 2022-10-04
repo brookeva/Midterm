@@ -1,0 +1,12 @@
+"0","ggplot() +
+  geom_sf(data = NC_Data, fill = ""grey40"") +
+  geom_sf(data = NC_Data.sf, aes(colour = q5(PricePerSq)), 
+          show.legend = ""point"", size = .75) +
+  scale_colour_manual(values = palette5,
+                   labels=qBr(NC,""PricePerSq""),
+                   name=""Quintile\nBreaks"") +
+  labs(title=""Price Per Square Foot, North Carolina"") +
+  mapTheme()
+"
+"2","Error in qBr(NC, ""PricePerSq"") : could not find function ""qBr""
+"

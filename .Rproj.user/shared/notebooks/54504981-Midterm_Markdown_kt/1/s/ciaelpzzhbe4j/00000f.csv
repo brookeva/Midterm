@@ -1,0 +1,11 @@
+"0","# ggplot, reorder"
+"0",""
+"0","# Mapping data"
+"0","ggplot() +"
+"0","  geom_sf(data = nhoods, fill = ""grey40"") +"
+"0","  #geom_sf(data = boston.sf, aes(colour = q5(PricePerSq)), "
+"0","          show.legend = ""point"", size = .75) +"
+"2","Error: unexpected ',' in:
+""  #geom_sf(data = boston.sf, aes(colour = q5(PricePerSq)), 
+          show.legend = ""point"",""
+"

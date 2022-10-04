@@ -1,0 +1,17 @@
+"0","NC_Data %>% 
+group_by(bldggrade) %>%
+  summarize(count = n())
+"
+"1","Simple feature collection with 8 features and 2 fields"
+"1","
+"
+"1","Geometry type: MULTIPOINT
+"
+"1","Dimension:     XY
+"
+"1","Bounding box:  "
+"1","xmin: -81.05626 ymin: 35.01345 xmax: -80.55941 ymax: 35.51012"
+"1","
+"
+"1","Geodetic CRS:  WGS 84
+"

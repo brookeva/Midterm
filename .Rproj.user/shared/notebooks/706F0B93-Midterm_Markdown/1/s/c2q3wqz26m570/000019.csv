@@ -1,0 +1,15 @@
+"0","# ggplot, reorder"
+"0",""
+"0","# Mapping data"
+"0","ggplot() +"
+"0","  geom_sf(data = NC_Data, fill = ""grey40"") +"
+"0","  geom_sf(data = NC_Data.sf, aes(colour = q5(Price)), "
+"0","          show.legend = ""point"", size = .75) +"
+"0","  scale_colour_manual(values = palette5,"
+"0","                   labels= qBr(NC_Data, ""Price""),"
+"0","                   name=""Quintile\nBreaks"") +"
+"0","  labs(title=""Price Per Square Foot, North Carolina"") +"
+"0","  mapTheme()"
+"2","Error in round(df[[variable]], 0) : 
+  non-numeric argument to mathematical function
+"

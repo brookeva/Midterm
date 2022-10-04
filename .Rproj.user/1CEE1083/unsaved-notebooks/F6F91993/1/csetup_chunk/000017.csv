@@ -1,0 +1,8 @@
+"0","library(geojsonsf)
+library(sf)
+
+NC_Data1 = geojsonsf::geojson_sf(""https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson"")
+"
+"2","Warning: URL 'https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson': Timeout of 60 seconds was reached"
+"2","Error in value[[3L]](cond) : There was an error downloading the geojson
+"
