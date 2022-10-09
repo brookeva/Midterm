@@ -78,8 +78,10 @@ NCData.sf <-
 # finding counts by group
 NC_Data %>% 
 group_by(bldggrade) %>%
+  st_drop_geometry() %>%
   summarize(count = n()) %>%
-  arrange(-count) %>% top_n(10) %>%
+  arrange(-count) %>% 
+  head(10) %>%
   kable() %>%
   kable_styling()
 ```
@@ -93,13 +95,13 @@ See if you can alter the size of the image output. Search for adjusting figure h
 
 # Mapping data
 ggplot() +
-  geom_sf(data = nhoods, fill = "grey40") +
-  #geom_sf(data = boston.sf, aes(colour = q5(PricePerSq)), 
+  geom_sf(data = NC_Data, fill = "grey40") +
+  geom_sf(data = NC_Data.sf, aes(colour = q5(price)), 
           show.legend = "point", size = .75) +
   scale_colour_manual(values = palette5,
-                   labels=qBr(boston,"PricePerSq"),
+                   labels= qBr(NC_Data, "price"),
                    name="Quintile\nBreaks") +
-  labs(title="Price Per Square Foot, Boston") +
+  labs(title="Price Per Square Foot, North Carolina") +
   mapTheme()
 ```
 
@@ -265,12 +267,12 @@ Note: the use of the `ggscatter()` function from the `ggpubr` package to plot th
 nc_sub_200k <- st_drop_geometry(NCData.sf) %>% 
 filter(price <= 2000000) 
 
-cor.test(nc_sub_200k$heatedarea,
+cor.test(nc_sub_200k$bedrooms,
          nc_sub_200k$price, 
          method = "pearson")
 
 ggscatter(nc_sub_200k,
-          x = "heatedarea",
+          x = "bedrooms",
           y = "price",
           add = "reg.line") +
   stat_cor(label.y = 2500000) 
@@ -299,12 +301,12 @@ Can somebody interpret the coefficient?
 Note: Here we use `ggscatter` with the `..rr.label` argument to show the `R2` Coefficient of Determination.
 
 ```{r simple_reg}
-livingReg <- lm(price ~ heatedarea, data = nc_sub_200k)
+Zipcode <- lm(price ~ zipcode, data = nc_sub_200k)
 
-summary(livingReg)
+summary(Zipcode)
 
 ggscatter(nc_sub_200k,
-          x = "heatedarea",
+          x = "Zipcode",
           y = "price",
           add = "reg.line") +
   stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), label.y = 2500000) +
