@@ -1,0 +1,8 @@
+"0","Groceries.sf <-"
+"0","  Groceries %>%"
+"0","    filter(PID > ""1"") %>%"
+"0","    na.omit() %>%"
+"0","    st_as_sf(coords = c(""Long"", ""Lat""), crs = ""EPSG:4326"") %>%"
+"0","    st_transform('ESRI:102286') %>%"
+"0","    distinct()"
+"0",""

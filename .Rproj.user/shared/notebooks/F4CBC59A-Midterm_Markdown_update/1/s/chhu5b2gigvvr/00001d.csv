@@ -1,0 +1,7 @@
+"0","Groceries.sf$OBJECTID.Buffer <- Groceries.sf %>% 
+    st_buffer(660) %>% 
+    aggregate(mutate(Groceries.sf, counter = 1),., sum) %>%
+    pull(counter)
+"
+"2","Error in FUN(X[[i]], ...) : invalid 'type' (character) of argument
+"

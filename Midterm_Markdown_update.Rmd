@@ -55,22 +55,26 @@ See if you can change the chunk options to get rid of the text outputs
 
 ```{r read_data}
 
-#nhoods <- 
-  #st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/3525b0ee6e6b427f9aab5d0a1d0a1a28_0.geojson") %>%
- # st_transform('ESRI:102286')
+ImprovProj <- 
+  st_read("Capital_Improvement_Projects_Points.geojson") %>%
+  st_transform('ESRI:102286')
 
-#boston <- 
-  #read.csv(file.path(root.dir,"/Chapter3_4/bostonHousePriceData_clean.csv"))
-
-Improvements <- st_read("Capital_Improvement_Projects_Points.geojson")
+Groceries <- st_read("Grocery_Stores_(points).geojson")
 
 NCData.sf <- 
   NC_Data %>% 
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, agr = "constant") %>%
   st_transform('ESRI:102286')
 
+ImproveProj.sf <- 
+  ImprovProj %>% 
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, agr = "constant") %>%
+  st_transform('ESRI:102286')
 
-#bostonCrimes <- read.csv(file.path(root.dir,"/Chapter3_4/bostonCrimes.csv"))
+Groceries.sf <- 
+  Groceries %>% 
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, agr = "constant") %>%
+  st_transform('ESRI:102286')
 
 ```
 
@@ -94,10 +98,22 @@ See if you can alter the size of the image output. Search for adjusting figure h
 ```{r price_map}
 # ggplot, reorder
 
-# Mapping data
+# Mapping data of NC
 ggplot() +
   geom_sf(data = nhoods, fill = "grey40") +
-  #geom_sf(data = boston.sf, aes(colour = q5(PricePerSq)), 
+  #geom_sf(data = NCData.sf, aes(colour = q5(PricePerSq)), 
+          show.legend = "point", size = .75) +
+  scale_colour_manual(values = palette5,
+                   labels=qBr(boston,"PricePerSq"),
+                   name="Quintile\nBreaks") +
+  labs(title="Price Per Square Foot, Boston") +
+  mapTheme()
+
+# Mapping data of Groceries 
+
+ggplot() +
+  geom_sf(data = nhoods, fill = "grey40") +
+  #geom_sf(data = NCData.sf, aes(colour = q5(PricePerSq)), 
           show.legend = "point", size = .75) +
   scale_colour_manual(values = palette5,
                    labels=qBr(boston,"PricePerSq"),
@@ -106,21 +122,20 @@ ggplot() +
   mapTheme()
 ```
 
-### Cleaning Crime Data
-Why are we using a filter for `Lat > -1`?
 
-```{r clean_crime}
-NC_Data.sf <-
-  Grocery %>%
-    filter(PID > "1",
-           Lat > -1) %>%
-    dplyr::select(Lat, Long) %>%
+### Cleaning Improvement Data
+
+```{r}
+Groceries.sf <-
+  Groceries %>%
+    filter(PID > "1") %>%
     na.omit() %>%
     st_as_sf(coords = c("Long", "Lat"), crs = "EPSG:4326") %>%
     st_transform('ESRI:102286') %>%
     distinct()
 
 ```
+
 
 ### Create Nearest Spatial Features
 This is where we do two important things:
@@ -146,41 +161,41 @@ The number `k` in the `nn_function()` function is the number of neighbors to to 
 ```{r Features}
 
 # Counts of crime per buffer of house sale
-boston.sf$crimes.Buffer <- boston.sf %>% 
+Groceries.sf$OBJECTID.Buffer <- Groceries.sf %>% 
     st_buffer(660) %>% 
-    aggregate(mutate(bostonCrimes.sf, counter = 1),., sum) %>%
+    aggregate(mutate(Groceries.sf, counter = 1),., sum) %>%
     pull(counter)
 
 ## Nearest Neighbor Feature
 
-boston.sf <-
-  boston.sf %>% 
+Groceries.sf <-
+  Groceries.sf %>% 
     mutate(
-      crime_nn1 = nn_function(st_coordinates(boston.sf), 
-                              st_coordinates(bostonCrimes.sf), k = 1),
+      grocery_nn1 = nn_function(st_coordinates(NCData.sf), 
+                              st_coordinates(Groceries.sf), k = 1),
       
-      crime_nn2 = nn_function(st_coordinates(boston.sf), 
-                              st_coordinates(bostonCrimes.sf), k = 2), 
+      grocery_nn2 = nn_function(st_coordinates(NCData.sf), 
+                              st_coordinates(Groceries.sf), k = 2), 
       
-      crime_nn3 = nn_function(st_coordinates(boston.sf), 
-                              st_coordinates(bostonCrimes.sf), k = 3), 
+      grocery_nn3 = nn_function(st_coordinates(NCData.sf), 
+                              st_coordinates(Groceries.sf), k = 3), 
       
-      crime_nn4 = nn_function(st_coordinates(boston.sf), 
-                              st_coordinates(bostonCrimes.sf), k = 4), 
+      grocery_nn4 = nn_function(st_coordinates(NCData.sf), 
+                              st_coordinates(Groceries.sf), k = 4), 
       
-      crime_nn5 = nn_function(st_coordinates(boston.sf), 
-                              st_coordinates(bostonCrimes.sf), k = 5)) 
+      grocery_nn5 = nn_function(st_coordinates(NCData.sf), 
+                              st_coordinates(Groceries.sf), k = 5)) 
 ```
 
 ```{r assault density}
 ## Plot assault density
-ggplot() + geom_sf(data = nhoods, fill = "grey40") +
-  stat_density2d(data = data.frame(st_coordinates(bostonCrimes.sf)), 
+ggplot() + geom_sf(data = Groceries, fill = "grey40") +
+  stat_density2d(data = data.frame(st_coordinates(Groceries.sf)), 
                  aes(X, Y, fill = ..level.., alpha = ..level..),
                  size = 0.01, bins = 40, geom = 'polygon') +
   scale_fill_gradient(low = "#25CB10", high = "#FA7800", name = "Density") +
   scale_alpha(range = c(0.00, 0.35), guide = "none") +
-  labs(title = "Density of Aggravated Assaults, Boston") +
+  labs(title = "Density of Grocery Stores, NC") +
   mapTheme()
 ```
 

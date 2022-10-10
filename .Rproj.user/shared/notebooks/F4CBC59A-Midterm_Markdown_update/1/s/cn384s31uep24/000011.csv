@@ -1,0 +1,12 @@
+"0","## Plot assault density
+ggplot() + geom_sf(data = Groceries, fill = ""grey40"") +
+  stat_density2d(data = data.frame(st_coordinates(Groceries.sf)), 
+                 aes(X, Y, fill = ..level.., alpha = ..level..),
+                 size = 0.01, bins = 40, geom = 'polygon') +
+  scale_fill_gradient(low = ""#25CB10"", high = ""#FA7800"", name = ""Density"") +
+  scale_alpha(range = c(0.00, 0.35), guide = ""none"") +
+  labs(title = ""Density of Grocery Stores, NC"") +
+  mapTheme()
+"
+"2","Error in mapTheme() : could not find function ""mapTheme""
+"
