@@ -62,6 +62,12 @@ See if you can change the chunk options to get rid of the text outputs
 #boston <- 
   #read.csv(file.path(root.dir,"/Chapter3_4/bostonHousePriceData_clean.csv"))
 
+Schools <- st_read("Schools_(view_of_points).geojson")
+TOD <- st_read("Transit_Oriented_Development_Areas.geojson")
+Grocery <- st_read("Grocery_Stores_(points).geojson")
+Shopping <- st_read("Grocery_Stores_(points).geojson")
+Improvements <- st_read("Capital_Improvement_Projects_Points.geojson")
+
 NCData.sf <- 
   NC_Data %>% 
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326, agr = "constant") %>%
