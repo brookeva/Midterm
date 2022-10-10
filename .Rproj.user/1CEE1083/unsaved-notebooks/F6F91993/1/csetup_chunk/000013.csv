@@ -1,6 +1,0 @@
-"0","NC_Data = FROM_GeoJson(url_file_string = ""https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson"")
-NC_Data = FROM_GeoJson(url_file_string = ""https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson"")
-"
-"2","Warning: URL 'https://raw.githubusercontent.com/mafichman/MUSA_508_Lab/main/Midterm/data/2022/studentData.geojson': Timeout of 60 seconds was reached"
-"2","Error in readLines(con, warn = FALSE) : cannot read from connection
-"
